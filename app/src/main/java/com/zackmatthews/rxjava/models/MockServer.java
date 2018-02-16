@@ -3,6 +3,7 @@ package com.zackmatthews.rxjava.models;
 import android.support.annotation.Nullable;
 
 import java.util.HashMap;
+import java.util.Random;
 
 /**
  * Created by zmatthews on 2/14/18.
@@ -22,6 +23,12 @@ public class MockServer {
     }
     @Nullable
     public static DbObject getObjectForId(String id){
+        try{
+            Thread.sleep(2000 + new Random().nextInt(3000));
+        }
+        catch(Throwable e){
+            e.printStackTrace();
+        }
         return objects.get(id);
     }
 }
