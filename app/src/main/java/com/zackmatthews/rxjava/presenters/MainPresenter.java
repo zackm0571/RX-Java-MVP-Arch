@@ -4,6 +4,9 @@ import com.zackmatthews.rxjava.contracts.MainContract;
 import com.zackmatthews.rxjava.models.DbObject;
 import com.zackmatthews.rxjava.models.LpApi;
 
+import io.reactivex.Observer;
+import io.reactivex.Scheduler;
+import io.reactivex.disposables.Disposable;
 import rx.Subscriber;
 
 /**
@@ -22,25 +25,10 @@ public class MainPresenter implements MainContract.Presenter{
 
     @Override
     public void getObject(String id, final ACTION action, final LpApi.ObjectAccessCallback callback) {
-        LpApi.getInstance().getObjById(id, new Subscriber<DbObject>() {
+        LpApi.getInstance().getObjById(id).subscribeWith(new Observer<DbObject>() {
             @Override
-            public void onCompleted() {
+            public void onSubscribe(Disposable d) {
 
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                try {
-                    if (callback != null) {
-                        callback.onObjectRetrieved(null, action);
-                    }
-                    if (!isUnsubscribed()) {
-                        unsubscribe();
-                    }
-                }
-                catch(Throwable err){
-                    err.printStackTrace();
-                }
             }
 
             @Override
@@ -48,9 +36,16 @@ public class MainPresenter implements MainContract.Presenter{
                 if(callback != null) {
                     callback.onObjectRetrieved(dbObject, action);
                 }
-                if(!isUnsubscribed()) {
-                    unsubscribe();
-                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
             }
         });
     }

@@ -2,15 +2,17 @@ package com.zackmatthews.rxjava.models;
 
 import com.zackmatthews.rxjava.presenters.MainPresenter;
 
-import rx.Observable;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 import rx.Observer;
-import rx.Single;
-import rx.SingleSubscriber;
 import rx.Subscriber;
 import rx.Subscription;
-import rx.internal.schedulers.NewThreadScheduler;
 import rx.observables.AsyncOnSubscribe;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by zmatthews on 2/14/18.
@@ -34,43 +36,27 @@ public class LpApi {
 
 
     public void createObject(final DbObject obj){
-        Observable.create(new AsyncOnSubscribe<Object, Object>() {
+        Observable.create(new ObservableOnSubscribe<DbObject>() {
             @Override
-            protected void onUnsubscribe(Object state) {
-                super.onUnsubscribe(state);
-            }
-
-            @Override
-            protected Object generateState() {
-                return null;
-            }
-
-            @Override
-            protected Object next(Object state, long requested, Observer<Observable<?>> observer) {
+            public void subscribe(ObservableEmitter<DbObject> emitter) throws Exception {
                 MockServer.addObject(obj);
-                return null;
+                emitter.onNext(obj);
             }
         }).subscribe();
-
     }
-    public Subscription getObjById(final String id, final Subscriber<? super DbObject> subscriber){
-       Observable observable = Observable.create(new AsyncOnSubscribe<DbObject, Object>() {
-            @Override
-            protected void onUnsubscribe(DbObject state) {
-                super.onUnsubscribe(state);
-            }
+
+
+    public Observable getObjById(final String id){
+
+        Observable<DbObject> observable = Observable.create(new ObservableOnSubscribe<DbObject>() {
 
             @Override
-            protected DbObject generateState() {
-                return MockServer.getObjectForId(id);
+            public void subscribe(ObservableEmitter<DbObject> emitter) throws Exception {
+                emitter.onNext(MockServer.getObjectForId(id));
             }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
 
-            @Override
-            protected DbObject next(DbObject state, long requested, Observer<Observable<?>> observer) {
-                subscriber.onNext(state);
-                return state;
-            }
-        }).observeOn(Schedulers.newThread());
-       return observable.subscribe(subscriber);
+
+       return observable;
     }
 }
