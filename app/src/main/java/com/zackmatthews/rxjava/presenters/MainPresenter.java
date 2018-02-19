@@ -57,6 +57,7 @@ public class MainPresenter implements MainContract.Presenter{
             }
 
             @Override
+
             public void onComplete() {
                 if(view != null) {
                     view.toggleProgressBar(false);
