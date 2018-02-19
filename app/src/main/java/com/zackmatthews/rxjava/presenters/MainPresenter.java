@@ -14,6 +14,11 @@ import rx.Subscriber;
  */
 
 public class MainPresenter implements MainContract.Presenter{
+    private MainContract.View view;
+
+    public MainPresenter(MainContract.View view){
+        this.view = view;
+    }
     public enum ACTION{
         DISPLAY_OBJ
     }
@@ -28,7 +33,9 @@ public class MainPresenter implements MainContract.Presenter{
         LpApi.getInstance().getObjById(id).subscribeWith(new Observer<DbObject>() {
             @Override
             public void onSubscribe(Disposable d) {
-
+                if(view != null) {
+                    view.toggleProgressBar(true);
+                }
             }
 
             @Override
@@ -36,16 +43,24 @@ public class MainPresenter implements MainContract.Presenter{
                 if(callback != null) {
                     callback.onObjectRetrieved(dbObject, action);
                 }
+
+                if(view != null) {
+                    view.toggleProgressBar(false);
+                }
             }
 
             @Override
             public void onError(Throwable e) {
-
+                if(view != null) {
+                    view.toggleProgressBar(false);
+                }
             }
 
             @Override
             public void onComplete() {
-
+                if(view != null) {
+                    view.toggleProgressBar(false);
+                }
             }
         });
     }

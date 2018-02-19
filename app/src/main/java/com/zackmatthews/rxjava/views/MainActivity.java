@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.zackmatthews.rxjava.R;
@@ -28,18 +29,21 @@ public class MainActivity extends AppCompatActivity implements LpApi.ObjectAcces
     private MainPresenter presenter;
     private TextView tv_Name;
     private TextView tv_Id;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         tv_Id = findViewById(R.id.tv_id);
         tv_Name = findViewById(R.id.tv_firstName);
+        progressBar = findViewById(R.id.progressBar);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        presenter = new MainPresenter();
+        presenter = new MainPresenter(this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -85,5 +89,15 @@ public class MainActivity extends AppCompatActivity implements LpApi.ObjectAcces
     public void showObject(DbObject obj) {
         tv_Id.setText(obj.getId());
         tv_Name.setText(obj.getName());
+    }
+
+    @Override
+    public void toggleProgressBar(boolean isVisible) {
+        if(isVisible){
+            progressBar.setVisibility(View.VISIBLE);
+        }
+        else{
+            progressBar.setVisibility(View.GONE);
+        }
     }
 }

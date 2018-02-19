@@ -12,6 +12,7 @@ public class MainContract {
 
     public interface View {
         void showObject(DbObject obj);
+        void toggleProgressBar(boolean isVisible);
 
     }
 
