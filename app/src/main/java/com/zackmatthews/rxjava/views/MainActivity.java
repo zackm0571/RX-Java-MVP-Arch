@@ -1,9 +1,7 @@
 package com.zackmatthews.rxjava.views;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -27,18 +25,15 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity implements LpApi.ObjectAccessCallback, MainContract.View{
 
     private MainPresenter presenter;
-    private TextView tv_Name;
-    private TextView tv_Id;
-    private ProgressBar progressBar;
+    public @BindView(R.id.tv_firstName)TextView tv_Name;
+    public @BindView(R.id.tv_id) TextView tv_Id;
+    public @BindView(R.id.progressBar)ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        tv_Id = findViewById(R.id.tv_id);
-        tv_Name = findViewById(R.id.tv_firstName);
-        progressBar = findViewById(R.id.progressBar);
+        ButterKnife.bind(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
